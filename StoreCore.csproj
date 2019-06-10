@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\css\all.min.css" />
+    <None Remove="Assets\js\solid.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Assets\css\site.css" />
     <Content Include="Assets\images\favicon.ico" />
     <Content Include="Assets\js\site.js" />
