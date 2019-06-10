@@ -1,0 +1,23 @@
+{
+  "name": "StoreCore",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Wesley Nunes",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "browser-sync": "^2.26.7",
+    "glyphicons": "^0.2.0",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-uncss": "^1.0.6",
+    "jquery": "^3.4.1",
+    "jquery-validation": "^1.19.0",
+    "jquery-validation-unobtrusive": "^3.2.11",
+    "qrcode.js": "^0.0.1"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.9.0"
+  }
+}
