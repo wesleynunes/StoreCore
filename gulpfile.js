@@ -10,7 +10,7 @@ gulp.task('js', function () {
         './node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js',
         './node_modules/glyphicons/glyphicons.js',
         './node_modules/qrcode.js/src/qrcode.js',  
-        './Assets/js/site.js',
+        //'./Assets/js/site.js',
         './Assets/js/fontawesome.min.js',
         './Assets/js/all.min.js',
     ])
@@ -20,7 +20,7 @@ gulp.task('js', function () {
 
 gulp.task('css', function () {
     return gulp.src([        
-        './Assets/css/site.css',
+        //'./Assets/css/site.css',
         './Assets/css/fontawesome.min.css',
         './node_modules/bootstrap/dist/css/bootstrap.min.css',  
         //painel admin

@@ -122,6 +122,11 @@ namespace StoreCore.Areas.Identity.Pages.Account
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        foreach (var token in info.AuthenticationTokens)
+                        {
+                            await _userManager.SetAuthenticationTokenAsync(user, info.LoginProvider, token.Name, token.Value);
+                        }
+
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                         return LocalRedirect(returnUrl);
