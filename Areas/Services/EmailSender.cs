@@ -25,7 +25,7 @@ namespace StoreCore.Areas.Services
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("wesleynunes.ti@outlook.com", "Wesley Nunes"),
+                From = new EmailAddress("wesleysilva.ti@gmail.com", "StoreCore"),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message
@@ -34,10 +34,7 @@ namespace StoreCore.Areas.Services
 
             // Disable click tracking.
             // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-            msg.TrackingSettings = new TrackingSettings
-            {
-                ClickTracking = new ClickTracking { Enable = false }
-            };
+            msg.SetClickTracking(false, false);
 
             return client.SendEmailAsync(msg);
         }

@@ -108,9 +108,11 @@ namespace StoreCore
             // Comentar a linha no controller register no OnPostAsync Areas/Identity/Pages/Account/Register.cshtml.cs.
             // Linha comentada await _signInManager.SignInAsync(user, isPersistent: false);
             // Esta linha nao permite o usuario logar automaticamente depois de se registrar
-            services.AddSingleton<IEmailSender, EmailSender>();
+            //services.AddSingleton<IEmailSender, EmailSender>();
+            //services.Configure<AuthMessageSenderOptions>(Configuration);
+            services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
-                        
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
