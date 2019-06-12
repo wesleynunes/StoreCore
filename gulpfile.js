@@ -9,10 +9,12 @@ gulp.task('js', function () {
         './node_modules/jquery-validation/dist/jquery.validate.min.js',
         './node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js',
         './node_modules/glyphicons/glyphicons.js',
-        './node_modules/qrcode.js/src/qrcode.js',  
+        './node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js',
+        //'./node_modules/qrcode.js/src/qrcode.js',  
         //'./Assets/js/site.js',
         './Assets/js/fontawesome.min.js',
         './Assets/js/all.min.js',
+        './Assets/js/qrcode.min.js',
     ])
         //.pipe(browserSync.stream())
         .pipe(gulp.dest('wwwroot/js/'));
@@ -20,11 +22,13 @@ gulp.task('js', function () {
 
 gulp.task('css', function () {
     return gulp.src([        
-        //'./Assets/css/site.css',
+        
         './Assets/css/fontawesome.min.css',
-        './node_modules/bootstrap/dist/css/bootstrap.min.css',  
+        './node_modules/bootstrap/dist/css/bootstrap.min.css',
+        './node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css',   
         //painel admin
-        './Assets/admin/css/simple-sidebar.css',        
+        //'./Assets/admin/css/simple-sidebar.css',
+        //'./Assets/css/site.css',        
     ])
         .pipe(cssmin())    
         .pipe(gulp.dest('wwwroot/css/'));

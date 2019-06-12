@@ -4,7 +4,9 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-simple-sidebar/blob/master/LICENSE)
  */
 body {
-  overflow-x: hidden;
+    overflow-x: hidden;
+    overflow-x: scroll;
+    white-space: nowrap;
 }
 
 #sidebar-wrapper {

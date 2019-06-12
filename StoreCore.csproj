@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\admin\css\simple-sidebar.css" />
     <None Remove="Assets\css\all.min.css" />
     <None Remove="Assets\js\solid.min.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Assets\admin\css\simple-sidebar.css">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="Assets\images\favicon.ico" />
   </ItemGroup>
 
@@ -26,8 +30,12 @@
 
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="wwwroot\css\simple-sidebar.css" />
   </ItemGroup>
 
 </Project>

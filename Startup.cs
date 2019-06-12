@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using StoreCore.Areas.Services;
+using StoreCore.Interface;
 
 namespace StoreCore
 {
@@ -99,6 +100,22 @@ namespace StoreCore
                 facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
                 facebookOptions.ClaimActions.MapJsonKey(ClaimTypes.Locality, "locale");
                 facebookOptions.SaveTokens = true;
+            })
+
+            //Autenticacao Google
+            .AddGoogle(googleOptions =>
+             {
+                 googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
+                 googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                 googleOptions.SaveTokens = true;
+             })
+
+            //Autenticacao Microsoft
+            .AddMicrosoftAccount(microsoftOptions =>
+            {
+                microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ClientId"];
+                microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
+                microsoftOptions.SaveTokens = true;
             });
 
             // Configuração email
@@ -113,12 +130,17 @@ namespace StoreCore
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
+                      
+
+            // Add Database Initializer
+            services.AddScoped<IDbInitializer, DbInitializer>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -137,6 +159,9 @@ namespace StoreCore
             app.UseCookiePolicy();
 
             app.UseAuthentication();
+
+            // Add Database Initializer
+            dbInitializer.Initialize();
 
             app.UseMvc(routes =>
             {

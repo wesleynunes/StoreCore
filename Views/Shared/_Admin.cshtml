@@ -14,9 +14,11 @@
     <link rel="stylesheet" href="~/css/simple-sidebar.css" />
     <link rel="stylesheet" href="~/css/fontawesome.min.css" />
     <link rel="stylesheet" href="~/css/site.css"/>
+    @*<link rel="stylesheet" href="~/css/dataTables.bootstrap4.css"/>*@
+
 </head>
 
-<body>      
+<body id="page-top">      
 
     <div class="d-flex" id="wrapper">
 
@@ -41,8 +43,8 @@
                             Adminstração
                         </a>
                         <div id="submenu" class="collapse margin-left-40 list-style-type-none">
-                            <a href="#" class="list-group-item list-group-item-action bg-white">  Usuarios</a>
-                            <a href="#" class="list-group-item list-group-item-action bg-white">  Grupos</a>
+                            <a asp-area="" asp-controller="Users" asp-action="Index" class="list-group-item list-group-item-action bg-white">  Usuarios</a>
+                            <a asp-area="" asp-controller="Roles" asp-action="Index" class="list-group-item list-group-item-action bg-white">  Grupos</a>
                         </div>
                     </div>
                 </div>
@@ -93,11 +95,22 @@
                 </div>
             </nav>
 
-            <div class="container-fluid">
-                @RenderBody()
+            <div class="container-fluid scroll">
+                <partial name="_CookieConsentPartial" />
+                <div class="">
+                    @RenderBody()
+                </div>
             </div>
+
+            <footer class="border-top footer text-muted">
+                <div class="container">
+                    &copy; 2019 - StoreCore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+            </footer>
         </div>
         <!-- /#page-content-wrapper -->
+
+   
 
     </div>
     <!-- /#wrapper -->
@@ -107,6 +120,9 @@
     <script src="~/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/all.min.js"></script>
     <script src="~/js/fontawesome.min.js"></script>
+    <!-- <script src="~/js/dataTables.bootstrap4.js"></script> -->
+    <!-- <script src="~/js/dataTables.js"></script> -->
+    @*<script src="~/js/dataTables.js"></script>*@
     <!-- <script src="~/js/solid.min.js"></script> -->
 
     <!-- Menu Toggle Script -->
@@ -116,7 +132,7 @@
             $("#wrapper").toggleClass("toggled");
         });
     </script>
-
+    @RenderSection("Scripts", required: false)
 </body>
 
 </html>
