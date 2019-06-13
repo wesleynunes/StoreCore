@@ -25,7 +25,6 @@ gulp.task('css', function () {
         
         './Assets/css/fontawesome.min.css',
         './node_modules/bootstrap/dist/css/bootstrap.min.css',
-        './node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css',   
         //painel admin
         //'./Assets/admin/css/simple-sidebar.css',
         //'./Assets/css/site.css',        

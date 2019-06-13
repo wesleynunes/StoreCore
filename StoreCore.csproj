@@ -30,12 +30,12 @@
 
 
   <ItemGroup>
-    <Folder Include="wwwroot\js\" />
+    <None Include="wwwroot\css\simple-sidebar.css" />
   </ItemGroup>
 
 
   <ItemGroup>
-    <None Include="wwwroot\css\simple-sidebar.css" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
