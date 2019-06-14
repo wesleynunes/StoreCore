@@ -6,6 +6,14 @@
 }
 
 <h1>Usuário</h1>
+@if (TempData["MessageUser"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MessageUser"]
+    </div>
+}
+
+<hr />
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -15,10 +23,10 @@
 
 <form class="float-right margin-bottom-20" asp-action="Index" method="get">
     <div class="input-group">
-        <input  class="form-control" placeholder="Pesquisar por usuário" aria-label="Recipient's username" name="SearchString" type="text" value="@ViewData["CurrentFilter"]">
+        <input class="form-control" placeholder="Pesquisar por usuário" aria-label="Recipient's username" name="SearchString" type="text" value="@ViewData["CurrentFilter"]">
         <div class="input-group-append">
             <button type="submit" class="btn btn-outline-primary"><i class="fas fa-search"></i></button>
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm center">Limpar</a>           
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm center">Limpar</a>
         </div>
     </div>
 </form>
@@ -29,16 +37,16 @@
         <tr>
             <th>
                 <a asp-action="Index" asp-route-sortOrder="@ViewData[" NameSortParm"]" asp-route-currentFilter="@ViewData[" CurrentFilter"]">Usuário</a>
-            </th>          
+            </th>
             <th>
                 Email Confirmado
-            </th>        
+            </th>
             <th>
                 Fim do bloqueio
             </th>
             <th>
                 Bloqueio ativado
-            </th>         
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -48,7 +56,7 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.UserName)
-                </td>           
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.EmailConfirmed)
                 </td>
@@ -57,7 +65,7 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.LockoutEnabled)
-                </td>         
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Detalhes</a> |

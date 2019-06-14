@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StoreCore.Data;
+using StoreCore.Services;
+using StoreCore.ViewModels;
 
 namespace StoreCore.Controllers.admin
 {
@@ -17,14 +20,14 @@ namespace StoreCore.Controllers.admin
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<ApplicationUser> _logger;
+        private readonly ILogger<UsersController> _logger;
         private readonly IEmailSender _emailSender;
 
         public UsersController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<ApplicationUser> logger,
+            ILogger<UsersController> logger,
             IEmailSender emailSender
             )
         {
@@ -97,6 +100,7 @@ namespace StoreCore.Controllers.admin
             return View(applicationUser);
         }
 
+
         // GET: Users/Create
         public IActionResult Create()
         {
@@ -109,16 +113,27 @@ namespace StoreCore.Controllers.admin
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ApplicationUser applicationUser)
-        {
+        public async Task<IActionResult> Create(UserViewModel viewmodel)
+        {            
             if (ModelState.IsValid)
             {
-                applicationUser.Id = Guid.NewGuid();
-                _context.Add(applicationUser);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                var user = new ApplicationUser { UserName = viewmodel.Email, Email = viewmodel.Email, EmailConfirmed = true };
+                var result = await _userManager.CreateAsync(user, viewmodel.Password);
+
+                if (result.Succeeded)
+                {
+                    TempData["MessageUser"] = "Usuário cadastrado com sucesso";
+                    //return View(viewmodel);
+                    return RedirectToAction("Index", "Users");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
-            return View(applicationUser);
+            return View(viewmodel);
+
 
         }
 
@@ -161,8 +176,18 @@ namespace StoreCore.Controllers.admin
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] ApplicationUser applicationUser)
+        public async Task<IActionResult> Edit(Guid id, ApplicationUser applicationUser)
         {
+
+            // pegar usuario logado id ou username 
+            //var Userlogin = await _userManager.GetUserAsync(User);
+            //var userId = await _userManager.GetUserIdAsync(user);
+
+
+            ApplicationUser userId  = _context.Users.Find(applicationUser.Id);
+
+            
+
             if (id != applicationUser.Id)
             {
                 return NotFound();
@@ -170,26 +195,72 @@ namespace StoreCore.Controllers.admin
 
             if (ModelState.IsValid)
             {
-                try
+                if (!CheckUser(applicationUser.UserName, applicationUser.Id))
                 {
-                    _context.Update(applicationUser);
-                    await _context.SaveChangesAsync();
+                    userId.UserName = applicationUser.UserName;
+                    userId.Email = applicationUser.Email;
+                    userId.EmailConfirmed = applicationUser.EmailConfirmed;
+                    userId.PasswordHash = Hash.HashPassword(applicationUser.PasswordHash);
+                    userId.TwoFactorEnabled = applicationUser.TwoFactorEnabled;
+                    userId.LockoutEnd = applicationUser.LockoutEnd;
+                    userId.LockoutEnabled = applicationUser.LockoutEnabled;
+                    userId.AccessFailedCount = applicationUser.AccessFailedCount;
+
+                    if (userId.PasswordHash != null)
+                    {
+                        userId.PasswordHash = Hash.HashPassword(applicationUser.PasswordHash);
+                    }
+                    
+                    //_context.Update(userId);
+                    await _userManager.UpdateAsync(userId);
+                    await _context.SaveChangesAsync();                   
+                    TempData["MessagePanelCategory"] = "Categoria atualizada com sucesso";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!ApplicationUserExists(applicationUser.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("Name", "Esta categoria já está em uso");
+                    return View(applicationUser);
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(applicationUser);
         }
+
+
+        //// POST: Users/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] ApplicationUser applicationUser)
+        //{
+        //    if (id != applicationUser.Id)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(applicationUser);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!ApplicationUserExists(applicationUser.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(applicationUser);
+        //}
 
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
@@ -223,6 +294,18 @@ namespace StoreCore.Controllers.admin
         private bool ApplicationUserExists(Guid id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+
+        public bool CheckUser(string name, Guid id)
+        {
+            var DoesExistcategory = (from u in _context.Users
+                                     where u.UserName == name
+                                     where u.Id != id
+                                     select u).FirstOrDefault();
+            if (DoesExistcategory != null)
+                return true;
+            else
+                return false;
         }
     }
 }

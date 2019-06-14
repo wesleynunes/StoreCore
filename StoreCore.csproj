@@ -21,6 +21,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Identity.Core.pt-br" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
@@ -31,11 +32,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\css\simple-sidebar.css" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
