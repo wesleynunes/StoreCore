@@ -123,7 +123,7 @@ namespace StoreCore.Controllers.admin
 
                 if (result.Succeeded)
                 {
-                    TempData["MessageUser"] = "Usuário cadastrado com sucesso";
+                    TempData["MessageOk"] = "Usuário cadastrado com sucesso";
                     //return View(viewmodel);
                     return RedirectToAction("Index", "Users");
                 }
@@ -136,24 +136,7 @@ namespace StoreCore.Controllers.admin
 
 
         }
-
-
-        //// POST: Users/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] ApplicationUser applicationUser)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        applicationUser.Id = Guid.NewGuid();
-        //        _context.Add(applicationUser);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(applicationUser);
-        //}
+                      
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -178,15 +161,95 @@ namespace StoreCore.Controllers.admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ApplicationUser applicationUser)
         {
-
-            // pegar usuario logado id ou username 
-            //var Userlogin = await _userManager.GetUserAsync(User);
-            //var userId = await _userManager.GetUserIdAsync(user);
-
-
+            //pega id do usuario 
             ApplicationUser userId  = _context.Users.Find(applicationUser.Id);
 
-            
+            //validação campo vazio
+            if (applicationUser.UserName == null)
+            {
+                ModelState.AddModelError("UserName", "O campo Usuário é obrigatório.");
+                return View(applicationUser);
+            }
+
+            // validação id invalido
+            if (id != applicationUser.Id)
+            {
+                return NotFound();
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    userId.UserName = applicationUser.UserName;
+                    userId.Email = applicationUser.UserName;
+                    userId.EmailConfirmed = applicationUser.EmailConfirmed;
+                    userId.TwoFactorEnabled = applicationUser.TwoFactorEnabled;
+                    userId.LockoutEnd = applicationUser.LockoutEnd;
+                    userId.LockoutEnabled = applicationUser.LockoutEnabled;
+                    userId.AccessFailedCount = applicationUser.AccessFailedCount;
+
+                    if (!CheckUserName(applicationUser.UserName, applicationUser.Id))
+                    {
+                        await _userManager.UpdateAsync(userId);
+                        await _context.SaveChangesAsync();
+                        TempData["MessageOk"] = "Usuário atualizado com sucesso";
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("UserName", "Este Usuário já está em uso");
+                        return View(applicationUser);
+                    }
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ApplicationUserExists(applicationUser.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(applicationUser);
+        }
+
+
+        // GET: Users/Edit/5
+        public async Task<IActionResult> ChangePassword(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var applicationUser = await _context.Users.FindAsync(id);
+            if (applicationUser == null)
+            {
+                return NotFound();
+            }
+            return View(applicationUser);
+        }
+
+        // POST: Users/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(Guid id, ApplicationUser applicationUser)
+        {
+            //pega id do usuario 
+            ApplicationUser userId = _context.Users.Find(applicationUser.Id);
+
+            if (applicationUser.PasswordHash == null)
+            {
+                ModelState.AddModelError("PasswordHash", "O campo senha é obrigatório.");
+                return View(applicationUser);
+            }           
 
             if (id != applicationUser.Id)
             {
@@ -195,72 +258,16 @@ namespace StoreCore.Controllers.admin
 
             if (ModelState.IsValid)
             {
-                if (!CheckUser(applicationUser.UserName, applicationUser.Id))
-                {
-                    userId.UserName = applicationUser.UserName;
-                    userId.Email = applicationUser.Email;
-                    userId.EmailConfirmed = applicationUser.EmailConfirmed;
-                    userId.PasswordHash = Hash.HashPassword(applicationUser.PasswordHash);
-                    userId.TwoFactorEnabled = applicationUser.TwoFactorEnabled;
-                    userId.LockoutEnd = applicationUser.LockoutEnd;
-                    userId.LockoutEnabled = applicationUser.LockoutEnabled;
-                    userId.AccessFailedCount = applicationUser.AccessFailedCount;
+                userId.PasswordHash = Hash.HashPassword(applicationUser.PasswordHash);
 
-                    if (userId.PasswordHash != null)
-                    {
-                        userId.PasswordHash = Hash.HashPassword(applicationUser.PasswordHash);
-                    }
-                    
-                    //_context.Update(userId);
-                    await _userManager.UpdateAsync(userId);
-                    await _context.SaveChangesAsync();                   
-                    TempData["MessagePanelCategory"] = "Categoria atualizada com sucesso";
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    ModelState.AddModelError("Name", "Esta categoria já está em uso");
-                    return View(applicationUser);
-                }
+                await _userManager.UpdateAsync(userId);
+                await _context.SaveChangesAsync();
+                TempData["MessageOk"] = "Senha alterada com sucesso";
+                return RedirectToAction(nameof(Index));
+               
             }
             return View(applicationUser);
         }
-
-
-        //// POST: Users/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] ApplicationUser applicationUser)
-        //{
-        //    if (id != applicationUser.Id)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(applicationUser);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!ApplicationUserExists(applicationUser.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(applicationUser);
-        //}
 
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
@@ -288,6 +295,7 @@ namespace StoreCore.Controllers.admin
             var applicationUser = await _context.Users.FindAsync(id);
             _context.Users.Remove(applicationUser);
             await _context.SaveChangesAsync();
+            TempData["MessageOk"] = "Usuário deletado";
             return RedirectToAction(nameof(Index));
         }
 
@@ -296,10 +304,10 @@ namespace StoreCore.Controllers.admin
             return _context.Users.Any(e => e.Id == id);
         }
 
-        public bool CheckUser(string name, Guid id)
+        public bool CheckUserName(string name, Guid id)
         {
             var DoesExistcategory = (from u in _context.Users
-                                     where u.UserName == name
+                                     where u.UserName == name                                   
                                      where u.Id != id
                                      select u).FirstOrDefault();
             if (DoesExistcategory != null)

@@ -1,21 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using StoreCore.Data;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using StoreCore.Data;
 
 namespace StoreCore.Controllers.admin
 {
     public class RolesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly ILogger<UsersController> _logger;
+        private readonly IEmailSender _emailSender;
 
-        public RolesController(ApplicationDbContext context)
+        public RolesController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager,
+            SignInManager<ApplicationUser> signInManager,
+            ILogger<UsersController> logger,
+            IEmailSender emailSender
+            )
         {
             _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _signInManager = signInManager;
+            _logger = logger;
+            _emailSender = emailSender;
         }
 
         // GET: Roles
@@ -53,16 +71,43 @@ namespace StoreCore.Controllers.admin
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,NormalizedName,ConcurrencyStamp")] ApplicationRole applicationRole)
+        public async Task<IActionResult> Create(ApplicationRole applicationRole)
         {
+
+            if(applicationRole.Name == null)
+            {
+                ModelState.AddModelError("Name", "O campo Name é obrigatório.");
+                return View(applicationRole);
+            }
+
             if (ModelState.IsValid)
             {
-                applicationRole.Id = Guid.NewGuid();
-                _context.Add(applicationRole);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (!CheckRoleName(applicationRole.Name, applicationRole.Id))
+                {
+                    //applicationRole.Id = Guid.NewGuid();
+                    //applicationRole.NormalizedName = applicationRole.Name;
+                    //_context.Add(applicationRole);
+                    await _roleManager.CreateAsync(applicationRole);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("Name", "Este Nome já está em uso");
+                    return View(applicationRole);
+                }
             }
             return View(applicationRole);
+
+
+            //if (ModelState.IsValid)
+            //{
+            //    applicationRole.Id = Guid.NewGuid();
+            //    _context.Add(applicationRole);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //return View(applicationRole);
         }
 
         // GET: Roles/Edit/5
@@ -86,19 +131,38 @@ namespace StoreCore.Controllers.admin
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,NormalizedName,ConcurrencyStamp")] ApplicationRole applicationRole)
+        public async Task<IActionResult> Edit(Guid id, ApplicationRole applicationRole)
         {
             if (id != applicationRole.Id)
             {
                 return NotFound();
             }
 
+            if(applicationRole.Name == null)
+            {
+                ModelState.AddModelError("Name", "O campo Name é obrigatório.");
+                return View(applicationRole);
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(applicationRole);
-                    await _context.SaveChangesAsync();
+
+                    if (!CheckRoleName(applicationRole.Name, applicationRole.Id))
+                    {
+                        _context.Update(applicationRole);
+                        //applicationRole.NormalizedName = applicationRole.Name;
+                        //await _roleManager.UpdateAsync(applicationRole);
+                        await _roleManager.UpdateNormalizedRoleNameAsync(applicationRole);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Name", "Este Nome já está em uso");
+                        return View(applicationRole);
+                    }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -148,6 +212,18 @@ namespace StoreCore.Controllers.admin
         private bool ApplicationRoleExists(Guid id)
         {
             return _context.Roles.Any(e => e.Id == id);
+        }
+
+        public bool CheckRoleName(string name, Guid id)
+        {
+            var DoesExistcategory = (from u in _context.Roles
+                                     where u.Name == name
+                                     where u.Id != id
+                                     select u).FirstOrDefault();
+            if (DoesExistcategory != null)
+                return true;
+            else
+                return false;
         }
     }
 }

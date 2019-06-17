@@ -6,10 +6,10 @@
 }
 
 <h1>Usuário</h1>
-@if (TempData["MessageUser"] != null)
+@if (TempData["MessageOk"] != null)
 {
     <div class="alert alert-success">
-        @TempData["MessageUser"]
+        @TempData["MessageOk"]
     </div>
 }
 
@@ -42,9 +42,6 @@
                 Email Confirmado
             </th>
             <th>
-                Fim do bloqueio
-            </th>
-            <th>
                 Bloqueio ativado
             </th>
             <th></th>
@@ -61,12 +58,10 @@
                     @Html.DisplayFor(modelItem => item.EmailConfirmed)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.LockoutEnd)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.LockoutEnabled)
                 </td>
                 <td>
+                    <a asp-action="ChangePassword" asp-route-id="@item.Id" class="btn btn-info btn-sm">Alterar senha</a> |
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Detalhes</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Deletar</a>
