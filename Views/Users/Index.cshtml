@@ -6,20 +6,19 @@
 }
 
 <h1>Usuário</h1>
+<hr />
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="btn btn-primary btn-sm" asp-action="Create">Cadastrar</a></li>
+    </ol>
+</nav>
+
 @if (TempData["MessageOk"] != null)
 {
     <div class="alert alert-success">
         @TempData["MessageOk"]
     </div>
 }
-
-<hr />
-
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a class="btn btn-primary btn-sm" asp-action="Create">Cadastrar</a></li>
-    </ol>
-</nav>
 
 <form class="float-right margin-bottom-20" asp-action="Index" method="get">
     <div class="input-group">

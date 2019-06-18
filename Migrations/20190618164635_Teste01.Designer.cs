@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StoreCore.Data;
 
 namespace StoreCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190618164635_Teste01")]
+    partial class Teste01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,7 +184,13 @@ namespace StoreCore.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>");
 
-                    b.Property<Guid>("Id");
+                    b.Property<Guid?>("RoleId1");
+
+                    b.Property<Guid?>("UserId1");
+
+                    b.HasIndex("RoleId1");
+
+                    b.HasIndex("UserId1");
 
                     b.HasDiscriminator().HasValue("ApplicationUserRole");
                 });
@@ -230,6 +238,17 @@ namespace StoreCore.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StoreCore.Data.ApplicationUserRole", b =>
+                {
+                    b.HasOne("StoreCore.Data.ApplicationRole", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId1");
+
+                    b.HasOne("StoreCore.Data.ApplicationUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId1");
                 });
 #pragma warning restore 612, 618
         }

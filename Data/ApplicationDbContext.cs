@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using StoreCore.Data;
 
 namespace StoreCore.Data
 {
@@ -12,5 +14,48 @@ namespace StoreCore.Data
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>(u => {
+                u.ToTable("Users"); //altera o nome da tabela                
+            });
+
+            builder.Entity<ApplicationRole>(r => {
+                r.ToTable("Roles"); //altera o nome da tabela
+            });
+
+            builder.Entity<IdentityUserRole<Guid>>(ur =>
+            {
+                ur.ToTable("UserRoles"); // altera o nome da tabela               
+                //ur.Property(p => p.Discriminator).HasColumnType("LONGTEXT");
+            });
+
+            builder.Entity<IdentityUserLogin<Guid>>(ul =>
+            {
+                ul.ToTable("UserLogins"); // altera o nome da tabela 
+
+            });
+
+            builder.Entity<IdentityUserClaim<Guid>>(uc =>
+            {
+                uc.ToTable("UserClaims"); // altera o nome da tabela                
+            });
+
+            builder.Entity<IdentityRoleClaim<Guid>>(rc =>
+            {
+                rc.ToTable("RoleClaims"); // altera o nome da tabela
+            });
+
+            builder.Entity<IdentityUserToken<Guid>>(ut =>
+            {
+                ut.ToTable("UserTokens"); // altera o nome da tabela               
+            });
+
+        }
+
+        public DbSet<StoreCore.Data.ApplicationUserRole> ApplicationUserRole { get; set; }
     }
 }

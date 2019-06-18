@@ -84,11 +84,9 @@ namespace StoreCore.Controllers.admin
             {
                 if (!CheckRoleName(applicationRole.Name, applicationRole.Id))
                 {
-                    //applicationRole.Id = Guid.NewGuid();
-                    //applicationRole.NormalizedName = applicationRole.Name;
-                    //_context.Add(applicationRole);
                     await _roleManager.CreateAsync(applicationRole);
                     await _context.SaveChangesAsync();
+                    TempData["MessageOk"] = "Usuário cadastrado com sucesso";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -98,16 +96,6 @@ namespace StoreCore.Controllers.admin
                 }
             }
             return View(applicationRole);
-
-
-            //if (ModelState.IsValid)
-            //{
-            //    applicationRole.Id = Guid.NewGuid();
-            //    _context.Add(applicationRole);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(applicationRole);
         }
 
         // GET: Roles/Edit/5
@@ -133,29 +121,36 @@ namespace StoreCore.Controllers.admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ApplicationRole applicationRole)
         {
+
+            //pega id do usuario 
+            ApplicationRole roleId = _context.Roles.Find(applicationRole.Id);
+
+            //Verifica se o id existe
             if (id != applicationRole.Id)
             {
                 return NotFound();
             }
 
+            // Verifica campo em branco
             if(applicationRole.Name == null)
             {
                 ModelState.AddModelError("Name", "O campo Name é obrigatório.");
                 return View(applicationRole);
             }
 
+
+            //edita roles
             if (ModelState.IsValid)
             {
                 try
                 {
-
+                    // valida se o campo nome role ja existe
                     if (!CheckRoleName(applicationRole.Name, applicationRole.Id))
                     {
-                        _context.Update(applicationRole);
-                        //applicationRole.NormalizedName = applicationRole.Name;
-                        //await _roleManager.UpdateAsync(applicationRole);
-                        await _roleManager.UpdateNormalizedRoleNameAsync(applicationRole);
+                        roleId.Name = applicationRole.Name;
+                        await _roleManager.UpdateAsync(roleId);
                         await _context.SaveChangesAsync();
+                        TempData["MessageOk"] = "Usuário atualizado com sucesso";
                     }
                     else
                     {
@@ -206,6 +201,7 @@ namespace StoreCore.Controllers.admin
             var applicationRole = await _context.Roles.FindAsync(id);
             _context.Roles.Remove(applicationRole);
             await _context.SaveChangesAsync();
+            TempData["MessageOk"] = "Usuário deletado com sucesso";
             return RedirectToAction(nameof(Index));
         }
 

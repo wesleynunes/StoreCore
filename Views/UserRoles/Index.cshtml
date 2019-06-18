@@ -1,0 +1,54 @@
+﻿@model IEnumerable<StoreCore.ViewModels.UserRolesViewModel>
+
+@{
+    ViewData["Title"] = "Permiçoes";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<h1>Permições</h1>
+<hr />
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="btn btn-success btn-sm" asp-action="Create">Cadastrar</a></li>
+    </ol>
+</nav>
+
+@if (TempData["MessageOk"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MessageOk"]
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.LabelForModel("Usuário")
+            </th>
+            <th>
+                @Html.LabelForModel("Grupo")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-primary btn-sm">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-secondary btn-sm">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger btn-sm">Deletar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

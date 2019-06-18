@@ -1,48 +1,59 @@
 ﻿@model IEnumerable<StoreCore.Data.ApplicationRole>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Grupos";
     Layout = "~/Views/Shared/_Admin.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Grupos</h1>
+<hr />
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="btn btn-primary btn-sm" asp-action="Create">Cadastrar</a></li>
+    </ol>
+</nav>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+@if (TempData["MessageOk"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MessageOk"]
+    </div>
+}
+
+<table class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.LabelForModel("Nome")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NormalizedName)
+                @Html.LabelForModel("Nome normalizado")
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ConcurrencyStamp)
+                @Html.LabelForModel("Carimbo de Concorrência") 
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NormalizedName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ConcurrencyStamp)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NormalizedName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ConcurrencyStamp)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Deletar</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
