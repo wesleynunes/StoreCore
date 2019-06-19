@@ -55,6 +55,7 @@ namespace StoreCore.Data
             });
 
         }
+          
 
         public DbSet<StoreCore.Data.ApplicationUserRole> ApplicationUserRole { get; set; }
     }

@@ -9,7 +9,8 @@ namespace StoreCore.Data
 {
     public class ApplicationUserRole : IdentityUserRole<Guid>
     {
-        public Guid Id { get; set; } 
+        public Guid UserRoleId { get; set; }
+
         //public virtual ApplicationUser User { get; set; }
         //public virtual ApplicationRole Role { get; set; }       
     }

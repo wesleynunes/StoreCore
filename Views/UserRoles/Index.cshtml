@@ -29,7 +29,7 @@
             </th>
             <th>
                 @Html.LabelForModel("Grupo")
-            </th>
+            </th>  
             <th></th>
         </tr>
     </thead>
@@ -42,7 +42,7 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
-                </td>
+                </td>            
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-primary btn-sm">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-secondary btn-sm">Detalhes</a> |

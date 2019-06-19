@@ -14,38 +14,33 @@ namespace StoreCore.Controllers.admin
     public class UserRolesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-       
 
-        public UserRolesController(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager
-            )
+        public UserRolesController(ApplicationDbContext context)
         {
             _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
         }
 
+        //// GET: UserRoles
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(await _context.ApplicationUserRole.ToListAsync());
+        //}
 
         // GET: UserRoles
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-
             List<UserRolesViewModel> listUserRoles = new List<UserRolesViewModel>();
 
-            var UserRoleList = (from ur in _context.UserRoles
-                                join u in _context.Users on ur.UserId equals u.Id
-                                join r in _context.Roles on ur.RoleId equals r.Id
-                                select new
-                                {
-                                    u.UserName,
-                                    r.Name,
-                                    ur.UserId,
-                                    ur.RoleId
-                                }).ToList();
+            var  UserRoleList = await (from ur in _context.UserRoles
+                                    join u in _context.Users on ur.UserId equals u.Id
+                                    join r in _context.Roles on ur.RoleId equals r.Id
+                                    select new
+                                    {
+                                        u.UserName,
+                                        r.Name,
+                                        ur.UserId,
+                                        ur.RoleId
+                                    }).ToListAsync();
 
             foreach (var item in UserRoleList)
             {
@@ -63,22 +58,74 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: UserRoles/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(UserRolesViewModel viewModel)
         {
-            if (id == null)
+            if (viewModel == null)
             {
                 return NotFound();
             }
 
-            var applicationUserRole = await _context.ApplicationUserRole
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (applicationUserRole == null)
-            {
-                return NotFound();
-            }
+            //UserRolesViewModel estudante = _context.UserRoles.Find(viewModel.UserId);
 
-            return View(applicationUserRole);
+            //UserRolesViewModel details = _context.ApplicationUserRole.Find(viewModel.UserId);
+
+            //UserRolesViewModel userId = await _context.ApplicationUserRole.Find(viewModel.UserId);
+
+
+            //UserRolesViewModel details = await _context.ApplicationUserRole.FirstOrDefaultAsync(m => m.UserId == id);
+
+            //if (details == null)
+            //{
+            //    return NotFound();
+            //}
+
+            List<UserRolesViewModel> listUserRoles = new List<UserRolesViewModel>();
+
+            var UserRoleList = await (from ur in _context.UserRoles
+                                      join u in _context.Users on ur.UserId equals u.Id
+                                      join r in _context.Roles on ur.RoleId equals r.Id
+                                      select new
+                                      {
+                                          u.UserName,
+                                          r.Name,
+                                          ur.UserId,
+                                          ur.RoleId
+                                      }).ToListAsync();
+
+            foreach (var item in UserRoleList)
+            {
+                UserRolesViewModel dataList = new UserRolesViewModel
+                {
+                    UserName = item.UserName,
+                    Name = item.Name,
+                    UserId = item.UserId,
+                    RoleId = item.RoleId,
+                    
+
+                };
+
+                listUserRoles.Add(dataList);
+            }
+            return View(listUserRoles);
+           
         }
+
+        //// GET: UserRoles/Details/5
+        //public async Task<IActionResult> Details(Guid? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var applicationUserRole = await _context.ApplicationUserRole.FirstOrDefaultAsync(m => m.UserId == id);
+        //    if (applicationUserRole == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(applicationUserRole);
+        //}
 
         // GET: UserRoles/Create
         public IActionResult Create()
@@ -97,14 +144,11 @@ namespace StoreCore.Controllers.admin
         {
             if (ModelState.IsValid)
             {
-                applicationUserRole.Id = Guid.NewGuid();
+                applicationUserRole.UserRoleId = Guid.NewGuid();
                 _context.Add(applicationUserRole);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", applicationUserRole.UserId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "UserName", applicationUserRole.RoleId);
             return View(applicationUserRole);
         }
 
@@ -121,8 +165,6 @@ namespace StoreCore.Controllers.admin
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", applicationUserRole.UserId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "UserName", applicationUserRole.RoleId);
             return View(applicationUserRole);
         }
 
@@ -131,7 +173,7 @@ namespace StoreCore.Controllers.admin
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, ApplicationUserRole applicationUserRole)
+        public async Task<IActionResult> Edit(Guid id, [Bind("UserRoleId,UserId,RoleId")] ApplicationUserRole applicationUserRole)
         {
             if (id != applicationUserRole.UserId)
             {
@@ -169,8 +211,7 @@ namespace StoreCore.Controllers.admin
                 return NotFound();
             }
 
-            var applicationUserRole = await _context.ApplicationUserRole
-                .FirstOrDefaultAsync(m => m.UserId == id);
+            var applicationUserRole = await _context.ApplicationUserRole.FirstOrDefaultAsync(m => m.UserId == id);
             if (applicationUserRole == null)
             {
                 return NotFound();
@@ -190,6 +231,7 @@ namespace StoreCore.Controllers.admin
             return RedirectToAction(nameof(Index));
         }
 
+        
         private bool ApplicationUserRoleExists(Guid id)
         {
             return _context.ApplicationUserRole.Any(e => e.UserId == id);

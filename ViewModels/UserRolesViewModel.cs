@@ -8,7 +8,8 @@ namespace StoreCore.ViewModels
 {
     public class UserRolesViewModel
     {
-        public Guid Id { get; set; }
+
+        public Guid UserRoleId { get; set; }
 
         public Guid UserId { get; set; }
 

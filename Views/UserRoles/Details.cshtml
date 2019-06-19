@@ -1,36 +1,28 @@
-﻿@model StoreCore.Data.ApplicationUserRole
+﻿@model StoreCore.ViewModels.UserRolesViewModel
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Admin.cshtml";
 }
 
-<h1>Detalhes do</h1>
-<h4>Grupo</h4>
-<hr />
-
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active"><a asp-action="index">Voltar</a></li>
-        <li class="breadcrumb-item"><a asp-action="index" asp-controller="Admin">Painel</a></li>
-    </ol>
-</nav>
-
+<h1>Details</h1>
 
 <div>
+    <h4>ApplicationUserRole</h4>
+    <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.LabelForModel("Usuario")
+            @Html.DisplayNameFor(model => model.UserRoleId)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
+            @Html.DisplayFor(model => model.UserRoleId)
         </dd>
         <dt class="col-sm-2">
-            @Html.LabelForModel("Grupo")
+            @Html.DisplayNameFor(model => model.UserName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RoleId)
-        </dd>       
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
     </dl>
 </div>
 <div>
