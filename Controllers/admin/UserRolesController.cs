@@ -14,71 +14,31 @@ namespace StoreCore.Controllers.admin
     public class UserRolesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserRolesController(ApplicationDbContext context)
+        public UserRolesController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager
+            )
         {
             _context = context;
+            _userManager = userManager;
         }
+
 
         //// GET: UserRoles
         //public async Task<IActionResult> Index()
         //{
-        //    return View(await _context.ApplicationUserRole.ToListAsync());
+        //    UserRolesViewModel userRoleViewModel = new UserRolesViewModel();
+
+        //    return View(userRoleViewModel);
+
+        //    //return View(await _context.ApplicationUserRole.ToListAsync());
         //}
 
         // GET: UserRoles
         public async Task<IActionResult> Index()
         {
-            List<UserRolesViewModel> listUserRoles = new List<UserRolesViewModel>();
-
-            var  UserRoleList = await (from ur in _context.UserRoles
-                                    join u in _context.Users on ur.UserId equals u.Id
-                                    join r in _context.Roles on ur.RoleId equals r.Id
-                                    select new
-                                    {
-                                        u.UserName,
-                                        r.Name,
-                                        ur.UserId,
-                                        ur.RoleId
-                                    }).ToListAsync();
-
-            foreach (var item in UserRoleList)
-            {
-                UserRolesViewModel dataList = new UserRolesViewModel
-                {
-                    UserName = item.UserName,
-                    Name = item.Name,
-                    UserId = item.UserId,
-                    RoleId = item.RoleId
-                };
-
-                listUserRoles.Add(dataList);
-            }
-            return View(listUserRoles);
-        }
-
-        // GET: UserRoles/Details/5
-        public async Task<IActionResult> Details(UserRolesViewModel viewModel)
-        {
-            if (viewModel == null)
-            {
-                return NotFound();
-            }
-
-            //UserRolesViewModel estudante = _context.UserRoles.Find(viewModel.UserId);
-
-            //UserRolesViewModel details = _context.ApplicationUserRole.Find(viewModel.UserId);
-
-            //UserRolesViewModel userId = await _context.ApplicationUserRole.Find(viewModel.UserId);
-
-
-            //UserRolesViewModel details = await _context.ApplicationUserRole.FirstOrDefaultAsync(m => m.UserId == id);
-
-            //if (details == null)
-            //{
-            //    return NotFound();
-            //}
-
             List<UserRolesViewModel> listUserRoles = new List<UserRolesViewModel>();
 
             var UserRoleList = await (from ur in _context.UserRoles
@@ -99,33 +59,29 @@ namespace StoreCore.Controllers.admin
                     UserName = item.UserName,
                     Name = item.Name,
                     UserId = item.UserId,
-                    RoleId = item.RoleId,
-                    
-
+                    RoleId = item.RoleId
                 };
 
                 listUserRoles.Add(dataList);
             }
             return View(listUserRoles);
-           
         }
 
-        //// GET: UserRoles/Details/5
-        //public async Task<IActionResult> Details(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var applicationUserRole = await _context.ApplicationUserRole.FirstOrDefaultAsync(m => m.UserId == id);
-        //    if (applicationUserRole == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: UserRoles/Details/5
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            var details = _context.UserRoles
 
-        //    return View(applicationUserRole);
-        //}
+            .Select(p => new UserRolesViewModel
+            {
+                UserId = p.UserId,
+                RoleId = p.RoleId,
+            }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
+
+            return View(details);
+        }
+
 
         // GET: UserRoles/Create
         public IActionResult Create()
@@ -144,7 +100,6 @@ namespace StoreCore.Controllers.admin
         {
             if (ModelState.IsValid)
             {
-                applicationUserRole.UserRoleId = Guid.NewGuid();
                 _context.Add(applicationUserRole);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -153,19 +108,22 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: UserRoles/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        //public async Task<IActionResult> Edit(Guid? id)
+        public IActionResult Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var applicationUserRole = await _context.ApplicationUserRole.FindAsync(id);
-            if (applicationUserRole == null)
+            var details = _context.UserRoles
+
+            .Select(p => new UserRolesViewModel
             {
-                return NotFound();
-            }
-            return View(applicationUserRole);
+                UserId = p.UserId,
+                RoleId = p.RoleId,
+            }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
+
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
+            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Name");
+            return View(details);
+           
         }
 
         // POST: UserRoles/Edit/5
@@ -173,7 +131,7 @@ namespace StoreCore.Controllers.admin
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("UserRoleId,UserId,RoleId")] ApplicationUserRole applicationUserRole)
+        public async Task<IActionResult> Edit(Guid id, ApplicationUserRole applicationUserRole)
         {
             if (id != applicationUserRole.UserId)
             {
@@ -206,18 +164,17 @@ namespace StoreCore.Controllers.admin
         // GET: UserRoles/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var details = _context.UserRoles
 
-            var applicationUserRole = await _context.ApplicationUserRole.FirstOrDefaultAsync(m => m.UserId == id);
-            if (applicationUserRole == null)
-            {
-                return NotFound();
-            }
+             .Select(p => new UserRolesViewModel
+             {
+                 UserId = p.UserId,
+                 RoleId = p.RoleId,
+             }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
 
-            return View(applicationUserRole);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
+            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Name");
+            return View(details);
         }
 
         // POST: UserRoles/Delete/5
@@ -225,6 +182,15 @@ namespace StoreCore.Controllers.admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+
+            var details = _context.UserRoles
+
+            .Select(p => new UserRolesViewModel
+            {
+                UserId = p.UserId,
+                RoleId = p.RoleId,
+            }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
+
             var applicationUserRole = await _context.ApplicationUserRole.FindAsync(id);
             _context.ApplicationUserRole.Remove(applicationUserRole);
             await _context.SaveChangesAsync();

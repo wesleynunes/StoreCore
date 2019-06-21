@@ -9,6 +9,12 @@ namespace StoreCore.ViewModels
     public class UserRolesViewModel
     {
 
+        //public IEnumerable<ApplicationUser> User { get; set; }
+
+        //public IEnumerable<ApplicationRole> Role { get; set; }
+
+        //public IEnumerable<ApplicationUserRole> UserRoles { get; set; }
+
         public Guid UserRoleId { get; set; }
 
         public Guid UserId { get; set; }
@@ -22,5 +28,6 @@ namespace StoreCore.ViewModels
         public virtual ApplicationUser User { get; set; }
 
         public virtual ApplicationRole Role { get; set; }
+
     }
 }

@@ -29,7 +29,8 @@ namespace StoreCore.Data
 
             builder.Entity<IdentityUserRole<Guid>>(ur =>
             {
-                ur.ToTable("UserRoles"); // altera o nome da tabela               
+                ur.ToTable("UserRoles"); // altera o nome da tabela
+                //ur.HasKey(k => k.UserId);
                 //ur.Property(p => p.Discriminator).HasColumnType("LONGTEXT");
             });
 
@@ -57,6 +58,9 @@ namespace StoreCore.Data
         }
           
 
-        public DbSet<StoreCore.Data.ApplicationUserRole> ApplicationUserRole { get; set; }
+        public DbSet<ApplicationUserRole> ApplicationUserRole { get; set; }
+          
+
+        public DbSet<StoreCore.Data.ApplicationUserClaim> ApplicationUserClaim { get; set; }
     }
 }

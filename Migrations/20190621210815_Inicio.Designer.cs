@@ -9,7 +9,7 @@ using StoreCore.Data;
 namespace StoreCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190618152933_Inicio")]
+    [Migration("20190621210815_Inicio")]
     partial class Inicio
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,9 @@ namespace StoreCore.Migrations
 
                     b.Property<string>("ClaimValue");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
                     b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
@@ -53,6 +56,8 @@ namespace StoreCore.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserClaims");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserClaim<Guid>");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -178,6 +183,13 @@ namespace StoreCore.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("StoreCore.Data.ApplicationUserClaim", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>");
+
+                    b.HasDiscriminator().HasValue("ApplicationUserClaim");
                 });
 
             modelBuilder.Entity("StoreCore.Data.ApplicationUserRole", b =>
