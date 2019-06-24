@@ -1,4 +1,5 @@
-﻿@model IEnumerable<StoreCore.Data.ApplicationUserClaim>
+﻿@*@model IEnumerable<StoreCore.Data.ApplicationUserClaim>*@
+@model  IEnumerable<StoreCore.ViewModels.UserClaimViewModel>
 
 @{
     ViewData["Title"] = "Reivindicações";
@@ -25,6 +26,12 @@
     <thead>
         <tr>
             <th>
+                Id
+            </th>
+            <th>
+                @Html.LabelForModel("Usuário")
+            </th>
+            <th>
                 @Html.LabelForModel("Tipo de reivindicação")
             </th>
             <th>
@@ -39,6 +46,12 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @Html.DisplayFor(ModelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(ModelItem => item.UserName)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ClaimType)
                 </td>

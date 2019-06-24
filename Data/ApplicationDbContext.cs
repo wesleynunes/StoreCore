@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StoreCore.Data;
+using StoreCore.Models.admin;
 
 namespace StoreCore.Data
 {
@@ -55,12 +56,20 @@ namespace StoreCore.Data
                 ut.ToTable("UserTokens"); // altera o nome da tabela               
             });
 
+            //builder.Entity<ClaimType>(t =>
+            //{
+            //    //c.HasIndex(i => i.Name).HasName("Category_Name_Index").IsUnique(); // inserir campo unico e o nome do index
+            //    t.HasIndex(i => i.ClaimTypeName).IsUnique();
+            //    t.Property(i => i.CreateDate).HasMaxLength(8);
+            //    t.Property(i => i.UpdateDate).HasMaxLength(8);
+            //});
+
         }
           
 
         public DbSet<ApplicationUserRole> ApplicationUserRole { get; set; }
-          
+        public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
-        public DbSet<StoreCore.Data.ApplicationUserClaim> ApplicationUserClaim { get; set; }
     }
 }

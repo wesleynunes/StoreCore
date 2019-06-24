@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StoreCore.Data;
 using StoreCore.Services;
 using StoreCore.ViewModels;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace StoreCore.Controllers.admin
 {
+    [Route("Admin/Users")]
     public class UsersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -39,6 +37,8 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: Users
+        [HttpGet("")]
+        //[HttpGet("Index")]
         public async Task<IActionResult> Index(
             string sortOrder, 
             string searchString,
@@ -80,9 +80,10 @@ namespace StoreCore.Controllers.admin
             int pageSize = 3;
             return View(await PaginatedList<ApplicationUser>.CreateAsync(users.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
-                       
+
 
         // GET: Users/Details/5
+        [HttpGet("Details")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -102,6 +103,7 @@ namespace StoreCore.Controllers.admin
 
 
         // GET: Users/Create
+        [HttpGet("Create")]
         public IActionResult Create()
         {
             return View();
@@ -111,7 +113,7 @@ namespace StoreCore.Controllers.admin
         // POST: Users/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel viewmodel)
         {            
@@ -136,9 +138,10 @@ namespace StoreCore.Controllers.admin
 
 
         }
-                      
+
 
         // GET: Users/Edit/5
+        [HttpGet("Edit")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -157,7 +160,7 @@ namespace StoreCore.Controllers.admin
         // POST: Users/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ApplicationUser applicationUser)
         {
@@ -220,6 +223,7 @@ namespace StoreCore.Controllers.admin
 
 
         // GET: Users/Edit/5
+        [HttpGet("ChangePassword")]
         public async Task<IActionResult> ChangePassword(Guid? id)
         {
             if (id == null)
@@ -238,7 +242,7 @@ namespace StoreCore.Controllers.admin
         // POST: Users/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("ChangePassword")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(Guid id, ApplicationUser applicationUser)
         {
@@ -270,6 +274,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: Users/Delete/5
+        [HttpGet("Delete")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -288,7 +293,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Delete"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

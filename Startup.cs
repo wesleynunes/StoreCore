@@ -129,12 +129,17 @@ namespace StoreCore
             //services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
-
-                      
+                                 
 
             // Add Database Initializer
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administradores", policy => policy.RequireClaim("Admin"));
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

@@ -183,6 +183,28 @@ namespace StoreCore.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("StoreCore.Models.admin.Category", b =>
+                {
+                    b.Property<Guid>("CategoryId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime>("CreateDate");
+
+                    b.Property<DateTime>("UpdateDate");
+
+                    b.Property<Guid>("UserId");
+
+                    b.HasKey("CategoryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("StoreCore.Data.ApplicationUserClaim", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>");
@@ -237,6 +259,14 @@ namespace StoreCore.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("StoreCore.Data.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StoreCore.Models.admin.Category", b =>
+                {
+                    b.HasOne("StoreCore.Data.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

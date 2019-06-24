@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace StoreCore.Controllers.admin
 {
+    [Route("Admin/Roles")]
     public class RolesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,12 +38,14 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: Roles
+        [HttpGet("")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Roles.ToListAsync());
         }
 
         // GET: Roles/Details/5
+        [HttpGet("Details")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -61,6 +64,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: Roles/Create
+        [HttpGet("Create")]
         public IActionResult Create()
         {
             return View();
@@ -69,7 +73,7 @@ namespace StoreCore.Controllers.admin
         // POST: Roles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApplicationRole applicationRole)
         {
@@ -99,6 +103,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: Roles/Edit/5
+        [HttpGet("Edit")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -117,7 +122,7 @@ namespace StoreCore.Controllers.admin
         // POST: Roles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ApplicationRole applicationRole)
         {
@@ -176,6 +181,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: Roles/Delete/5
+        [HttpGet("Delete")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -194,7 +200,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // POST: Roles/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Delete"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

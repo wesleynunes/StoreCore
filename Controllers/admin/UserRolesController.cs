@@ -11,6 +11,7 @@ using StoreCore.ViewModels;
 
 namespace StoreCore.Controllers.admin
 {
+    [Route("Admin/UserRoles")]
     public class UserRolesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,6 +38,7 @@ namespace StoreCore.Controllers.admin
         //}
 
         // GET: UserRoles
+        [HttpGet("")]
         public async Task<IActionResult> Index()
         {
             List<UserRolesViewModel> listUserRoles = new List<UserRolesViewModel>();
@@ -69,7 +71,8 @@ namespace StoreCore.Controllers.admin
 
 
         // GET: UserRoles/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        [HttpGet("Details")]
+        public IActionResult Details(Guid? id)
         {
             var details = _context.UserRoles
 
@@ -82,8 +85,8 @@ namespace StoreCore.Controllers.admin
             return View(details);
         }
 
-
         // GET: UserRoles/Create
+        [HttpGet("Create")]
         public IActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
@@ -94,7 +97,7 @@ namespace StoreCore.Controllers.admin
         // POST: UserRoles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApplicationUserRole applicationUserRole)
         {
@@ -109,6 +112,7 @@ namespace StoreCore.Controllers.admin
 
         // GET: UserRoles/Edit/5
         //public async Task<IActionResult> Edit(Guid? id)
+        [HttpGet("Edit")]
         public IActionResult Edit(Guid? id)
         {
 
@@ -129,7 +133,7 @@ namespace StoreCore.Controllers.admin
         // POST: UserRoles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ApplicationUserRole applicationUserRole)
         {
@@ -162,7 +166,8 @@ namespace StoreCore.Controllers.admin
         }
 
         // GET: UserRoles/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        [HttpGet("Delete")]
+        public IActionResult Delete(Guid? id)
         {
             var details = _context.UserRoles
 
@@ -178,7 +183,7 @@ namespace StoreCore.Controllers.admin
         }
 
         // POST: UserRoles/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Delete"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
@@ -196,8 +201,7 @@ namespace StoreCore.Controllers.admin
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        
+                
         private bool ApplicationUserRoleExists(Guid id)
         {
             return _context.ApplicationUserRole.Any(e => e.UserId == id);

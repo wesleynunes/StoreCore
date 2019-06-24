@@ -70,6 +70,27 @@ namespace StoreCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CategoryId = table.Column<Guid>(nullable: false),
+                    CategoryName = table.Column<string>(maxLength: 50, nullable: false),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    UpdateDate = table.Column<DateTime>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                    table.ForeignKey(
+                        name: "FK_Categories_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserClaims",
                 columns: table => new
                 {
@@ -157,6 +178,11 @@ namespace StoreCore.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Categories_UserId",
+                table: "Categories",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
@@ -196,6 +222,9 @@ namespace StoreCore.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Categories");
+
             migrationBuilder.DropTable(
                 name: "RoleClaims");
 

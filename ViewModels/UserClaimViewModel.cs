@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 
 namespace StoreCore.ViewModels
 {
-    public class UserRolesViewModel
+    public class UserClaimViewModel
     {
-        public Guid UserRoleId { get; set; }
+
+        public int Id { get; set; }
 
         public Guid UserId { get; set; }
 
-        public Guid RoleId { get; set; }
-
         public string UserName { get; set; }
 
-        public string Name { get; set; }
+        public string ClaimType { get; set; }
+
+        public string ClaimValue { get; set; }
 
         public virtual ApplicationUser User { get; set; }
 
-        public virtual ApplicationRole Role { get; set; }
+        public virtual ApplicationUserClaim UserClaim { get; set; }
 
     }
 }
