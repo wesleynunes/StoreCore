@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Admin.cshtml";
 }
 
-<h1>Permições</h1>
+<h1>Função do usuário</h1>
 <hr />
 
 <nav aria-label="breadcrumb">
@@ -23,12 +23,12 @@
 
 <table class="table table-bordered table-striped">
     <thead>
-        <tr>
+        <tr>            
             <th>
                 @Html.LabelForModel("Usuário")
             </th>
             <th>
-                @Html.LabelForModel("Grupo")
+                @Html.LabelForModel("Papel")
             </th>  
             <th></th>
         </tr>
@@ -36,7 +36,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr>                
                 <td>
                     @Html.DisplayFor(modelItem => item.UserName)
                 </td>
@@ -44,7 +44,6 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>            
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.UserId" asp-route-id="@item.RoleId" class="btn btn-primary btn-sm">Editar</a> |
                     <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-secondary btn-sm">Detalhes</a> |
                     <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger btn-sm">Deletar</a>
                 </td>

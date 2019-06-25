@@ -31,6 +31,7 @@ namespace StoreCore.Data
             builder.Entity<IdentityUserRole<Guid>>(ur =>
             {
                 ur.ToTable("UserRoles"); // altera o nome da tabela
+                //ur.HasKey(i => new { i.UserId, i.RoleId });
                 //ur.HasKey(k => k.UserId);
                 //ur.Property(p => p.Discriminator).HasColumnType("LONGTEXT");
             });

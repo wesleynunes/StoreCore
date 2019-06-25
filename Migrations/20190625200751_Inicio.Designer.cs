@@ -9,7 +9,7 @@ using StoreCore.Data;
 namespace StoreCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190624194402_Inicio")]
+    [Migration("20190625200751_Inicio")]
     partial class Inicio
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

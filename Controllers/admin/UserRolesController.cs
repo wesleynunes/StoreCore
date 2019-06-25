@@ -26,17 +26,7 @@ namespace StoreCore.Controllers.admin
             _userManager = userManager;
         }
 
-
-        //// GET: UserRoles
-        //public async Task<IActionResult> Index()
-        //{
-        //    UserRolesViewModel userRoleViewModel = new UserRolesViewModel();
-
-        //    return View(userRoleViewModel);
-
-        //    //return View(await _context.ApplicationUserRole.ToListAsync());
-        //}
-
+              
         // GET: UserRoles
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -51,39 +41,58 @@ namespace StoreCore.Controllers.admin
                                           u.UserName,
                                           r.Name,
                                           ur.UserId,
-                                          ur.RoleId
+                                          ur.RoleId,                                      
                                       }).ToListAsync();
 
             foreach (var item in UserRoleList)
             {
                 UserRolesViewModel dataList = new UserRolesViewModel
                 {
+                    UserRoleId = item.UserId,
                     UserName = item.UserName,
                     Name = item.Name,
                     UserId = item.UserId,
                     RoleId = item.RoleId
                 };
-
                 listUserRoles.Add(dataList);
             }
             return View(listUserRoles);
         }
-
+               
 
         // GET: UserRoles/Details/5
         [HttpGet("Details")]
         public IActionResult Details(Guid? id)
         {
-            var details = _context.UserRoles
-
-            .Select(p => new UserRolesViewModel
+            if (id == null)
             {
-                UserId = p.UserId,
-                RoleId = p.RoleId,
-            }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
+                return NotFound();
+            }
+
+            var UserRoleList = from ur in _context.UserRoles
+                               join u in _context.Users on ur.UserId equals u.Id
+                               join r in _context.Roles on ur.RoleId equals r.Id
+                               where ur.UserId == id
+                               select new
+                               {
+                                   u.UserName,
+                                   r.Name,
+                                   ur.UserId,
+                                   ur.RoleId,
+                               };
+
+
+            var details = UserRoleList.Select(p => new UserRolesViewModel
+            {
+                UserId =    p.UserId,
+                RoleId =    p.RoleId,
+                UserName =  p.UserName,
+                Name    =   p.Name,
+            }).Where(p => p.UserId == id).FirstOrDefault();
 
             return View(details);
         }
+
 
         // GET: UserRoles/Create
         [HttpGet("Create")]
@@ -109,102 +118,52 @@ namespace StoreCore.Controllers.admin
             }
             return View(applicationUserRole);
         }
-
-        // GET: UserRoles/Edit/5
-        //public async Task<IActionResult> Edit(Guid? id)
-        [HttpGet("Edit")]
-        public IActionResult Edit(Guid? id)
-        {
-
-            var details = _context.UserRoles
-
-            .Select(p => new UserRolesViewModel
-            {
-                UserId = p.UserId,
-                RoleId = p.RoleId,
-            }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
-
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Name");
-            return View(details);
-           
-        }
-
-        // POST: UserRoles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost("Edit")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, ApplicationUserRole applicationUserRole)
-        {
-            if (id != applicationUserRole.UserId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(applicationUserRole);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ApplicationUserRoleExists(applicationUserRole.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(applicationUserRole);
-        }
+              
 
         // GET: UserRoles/Delete/5
         [HttpGet("Delete")]
         public IActionResult Delete(Guid? id)
         {
-            var details = _context.UserRoles
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-             .Select(p => new UserRolesViewModel
-             {
-                 UserId = p.UserId,
-                 RoleId = p.RoleId,
-             }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
+            var UserRoleList = from ur in _context.UserRoles
+                               join u in _context.Users on ur.UserId equals u.Id
+                               join r in _context.Roles on ur.RoleId equals r.Id
+                               where ur.UserId == id
+                               select new
+                               {
+                                   u.UserName,
+                                   r.Name,
+                                   ur.UserId,
+                                   ur.RoleId,
+                               };
 
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
-            ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Name");
-            return View(details);
+            var delete = UserRoleList.Select(p => new UserRolesViewModel
+            {
+                UserId = p.UserId,
+                RoleId = p.RoleId,
+                UserName = p.UserName,
+                Name = p.Name,
+            }).Where(p => p.UserId == id).FirstOrDefault();
+
+            return View(delete);
         }
+
 
         // POST: UserRoles/Delete/5
         [HttpPost("Delete"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid UserId, Guid RoleId)
         {
+            var userRole = await _context.ApplicationUserRole.FindAsync(UserId, RoleId);
 
-            var details = _context.UserRoles
-
-            .Select(p => new UserRolesViewModel
-            {
-                UserId = p.UserId,
-                RoleId = p.RoleId,
-            }).Where(p => p.UserId == id).FirstOrDefault();//Executes the query
-
-            var applicationUserRole = await _context.ApplicationUserRole.FindAsync(id);
-            _context.ApplicationUserRole.Remove(applicationUserRole);
+            _context.ApplicationUserRole.Remove(userRole);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-                
-        private bool ApplicationUserRoleExists(Guid id)
-        {
-            return _context.ApplicationUserRole.Any(e => e.UserId == id);
-        }
+        
     }
 }
