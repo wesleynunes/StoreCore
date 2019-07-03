@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using StoreCore.Models.admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace StoreCore.Data
         //public virtual ICollection<ApplicationUserLogin> Logins { get; set; }
         //public virtual ICollection<ApplicationUserToken> Tokens { get; set; }
         //public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+
+        public virtual ICollection<Category> Categories { get; set; }
     }
 }

@@ -95,8 +95,6 @@ namespace StoreCore.Controllers.admin
         //}
 
 
-
-
         // GET: UserClaims/Details/5
         [HttpGet("Details")]
         public async Task<IActionResult> Details(int? id)
